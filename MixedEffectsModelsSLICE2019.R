@@ -253,6 +253,7 @@ slopep2
 
 males.prob <- male.base +
   stat_function(aes(),size=1.5,
+#equation:p = 1/1+e-(b0 +b1x+b2x+b3x)
                 fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(0)))})
 
 males.prob
