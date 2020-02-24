@@ -1,6 +1,9 @@
 #Final Project - Christian Carson - Data Analysis in R
 ########Sea Lice Resistance - Mized Effects Models Template#########
 
+#response to reviewers 
+#discuss 
+
 # Date: 2/19/2020
 # Last updated: 
 # Name: Christian Carson
@@ -252,11 +255,35 @@ slopep1
 slopep2
 
 males.prob <- male.base +
-  stat_function(aes(),size=1.5,
+  stat_function(aes(),size=1.3,
 #equation:p = 1/1+e-(b0 +b1x+b2x+b3x)
-                fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(0)))})
+                fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(0)))})+
+#male p1
+  stat_function(aes(),size=1,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(1)-slopep2*(0)))})+
+#male p2
+stat_function(aes(),size=1,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(1)))})
+  #male p1
+
 
 males.prob
+
+#females
+female.base <- ggplot(data = SLICE.2019, aes(x=SLICE.2019$slice_conc_PPB, y=SLICE.2019$dead_and_moribund))  +
+  geom_point()+ 
+  theme_bw()+
+  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal dose curve for male lice')+
+  ylim(0,1)+
+  geom_hline(yintercept=0.5, linetype='dashed', size=1)+
+  theme_classic()
+female.prob <- female.base + #equation:p = 1/1+e-(b0 +b1x+b2x+b3x)
+          
+  stat_function(aes(),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(1)-slopep2*(0)))})+
+  #male p2
+  stat_function(aes(),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(0)-slopep2*(1)))})
+
+
+female.prob
+
 
 #I am still in the process of figuring out how this equation actually works 
 
