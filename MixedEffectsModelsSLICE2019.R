@@ -1,9 +1,6 @@
 #Final Project - Christian Carson - Data Analysis in R
 ########Sea Lice Resistance - Mized Effects Models Template#########
 
-#response to reviewers 
-#discuss 
-
 # Date: 2/19/2020
 # Last updated: 
 # Name: Christian Carson
@@ -304,6 +301,29 @@ pp <- lapply(jvalues, function(j) {
   SLICE.2019$slice_conc_PPB <- j
   predict(m.3, newdata = tmpdat, type = "response")
 })
+
+#EC50 estimates
+#EC50 values
+#assign 50% probaility 
+
+p <- 0.5
+#EC50 female pal 1
+EC50.FP1 <- (log(p/(1-p)) - intercept-slopemale*(0)-slopep1*(1)-slopep2*(0)) / (slopeconc)
+#EC50 female pal 2
+EC50.FP2 <- (log(p/(1-p)) - intercept-slopemale*(0)-slopep1*(0)-slopep2*(1)) / (slopeconc)
+#EC50 male pal 1
+EC50.MP1 <- (log(p/(1-p)) - intercept-slopemale*(1)-slopep1*(1)-slopep2*(0)) / (slopeconc)
+#EC50 male pal 2
+EC50.MP2 <- (log(p/(1-p)) - intercept-slopemale*(1)-slopep1*(0)-slopep2*(1)) / (slopeconc)
+#EC50 male adult
+EC50.MADULT <- (log(p/(1-p)) - intercept-slopemale*(1)-slopep1*(0)-slopep2*(0)) / (slopeconc)
+
+# EC50 VALUES
+EC50.FP1
+EC50.FP2
+EC50.MP1
+EC50.MP2
+EC50.MADULT
 
 #this next section is to be added once the first is complete, essentially all that would be added in terms of models would be the fixed effect of year, possibly collection location as a random effect. This would also include two new datasets (2012 and 2015), a bunch of subsetting, and a lot of ggplot pain. This next section is only if I have time. I would really like to figure out how to actually get the predicted probabilites as a list and plot them rather than manually write the equations for each slope.
 
