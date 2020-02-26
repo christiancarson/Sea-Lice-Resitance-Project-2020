@@ -10,11 +10,9 @@
 #100-138: Analysis Setup
 #138-219: Mixed Models for 2019 Resistance Report
 #219-316: Dose response curves for 2019 Resistance Model and EC50 estimates
-#Later sections to be added.
 #
 #
 #
-
 ###########Setup for 2019 Resistance################
 ### INPUT ###
 rm(list=ls())
@@ -111,25 +109,25 @@ level_order <- c('P1', 'P2', 'A')
 #visualize data
 #female lice across stages
 tmp <- melt(SLICE.F[, c("louse_stage", "slice_conc_PPB")], id.vars="louse_stage")
-ggplot(tmp, aes(x = louse_stage, y = value)) +
+Plot.Females <- ggplot(tmp, aes(x = louse_stage, y = value)) +
   geom_jitter(alpha = .5) +
   ggtitle('Female Sea Lice')+
   ylab('EMB concentration')+
   xlab('Life stage')+
   facet_grid(variable ~ .) +
   theme_classic()
-
+ggsave("FemaleSealiceNestedness",path = path.plots, plot = Plot.Females, device = "png")
 
 #male lice across stages
 tmp <- melt(SLICE.M[, c("louse_stage", "slice_conc_PPB")], id.vars="louse_stage")
-ggplot(tmp, aes(x = louse_stage, y = value)) +
+Plot.Males <- ggplot(tmp, aes(x = louse_stage, y = value)) +
   geom_jitter(alpha = .5)  +
   ggtitle('Male Sea Lice')+
   ylab('EMB concentration')+
   xlab('Life stage')+
   facet_grid(variable ~ .) +
   theme_classic()
-
+ggsave("MaleSealiceNestedness",path = path.plots, plot = Plot.Males, device = "png")
 
 #so we know we are going to use a glm because our data is not normal and we are
 #dealing with a binomial distribution. Lets start with our first model, with no
@@ -312,27 +310,3 @@ EC50.MP2
 #Male Adult
 EC50.MADULT
 
-
-  #SECTION NEEDS WORK#####
-#https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
-#trying an alternate method here as recomended by Thor, instead of writing out each slope in the function, I'm going to try and get all the predicted probabilites as a new dataframe
-# temporary data
-
-names(SLICE.2019)
-tmpdat <- SLICE.2019[, c("")]
-
-jvalues <- with(SLICE.2019, seq(from = min(slice_conc_PPB), to = max(slice_conc_PPB), length.out = 100))
-
-# calculate predicted probabilities and store in a list
-pp <- lapply(jvalues, function(j) {
-  SLICE.2019$slice_conc_PPB <- j
-  predict(m.3, newdata = tmpdat, type = "response")
-})
-
-
-#this next section is to be added once the first is complete, essentially all that would be added in terms of models would be the fixed effect of year, possibly collection location as a random effect. This would also include two new datasets (2012 and 2015), a bunch of subsetting, and a lot of ggplot pain. This next section is only if I have time. I would really like to figure out how to actually get the predicted probabilites as a list and plot them rather than manually write the equations for each slope.
-
-########Setup for 2012-2015-2019 Resistance Analysis#####
-######Begin Analysis 2012-2015-2019 Resistance
-######Models for 2012-2015-2019 Resistance
-#######Graphing for 2012-2015-2019 Resitance
