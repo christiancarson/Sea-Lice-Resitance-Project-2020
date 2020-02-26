@@ -224,12 +224,12 @@ male.base <- ggplot(data = SLICE.2019, aes(x=SLICE.2019$slice_conc_PPB, y=SLICE.
   geom_point()+ 
   theme_bw()+
   #adding asthetics and titles
-  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal dose curve for male lice')+
+  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal Dose-Response Curve for Male Lice')+
   #adjust y lim so its all out of 1
   ylim(0,1)+
   #add .abline at .5 for EC50 visual = aka the concentration needed to get 50% of
   #the maximal response = death
-  geom_hline(yintercept=0.5, linetype='dashed', size=1)+
+  geom_hline(yintercept=0.5, size=1)+
   #no gridlines
   theme_classic()
 
@@ -243,65 +243,47 @@ stat_function
 #add pal 1's, the equation is provided within the function after stetting the functions dataframe.
 #backround: https://stats.idre.ucla.edu/other/mult-pkg/introduction-to-generalized-linear-mixed-models/
 #equation for slope based on:https://stats.idre.ucla.edu/stata/seminars/deciphering-interactions-in-logistic-regression/
-#probability = exp(Xb)/(1 + exp(Xb))
 #names for ref:
 intercept
 slopeconc
 slopemale
 slopep1
 slopep2
+summary(m.2)
 
 males.prob <- male.base +
-  stat_function(aes(),size=1.3,
+  stat_function(aes(color = "Adult"),size=1.3,
 #equation:p = 1/1+e-(b0 +b1x+b2x+b3x)
+#Adult
                 fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(0)))})+
 #male p1
-  stat_function(aes(),size=1,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(1)-slopep2*(0)))})+
+  stat_function(aes(color = "PAL I"),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(1)-slopep2*(0)))})+
 #male p2
-stat_function(aes(),size=1,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(1)))})
-  #male p1
+stat_function(aes(color = "PAL II"),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(1)-slopep1*(0)-slopep2*(1)))})
 
 
 males.prob
+ggsave("DoseResponseCurveMaleLice",path = path.plots, plot = males.prob, device = "png")
 
 #females
 female.base <- ggplot(data = SLICE.2019, aes(x=SLICE.2019$slice_conc_PPB, y=SLICE.2019$dead_and_moribund))  +
   geom_point()+ 
   theme_bw()+
-  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal dose curve for male lice')+
+  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal Dose-Response Curve for Female Lice')+
   ylim(0,1)+
-  geom_hline(yintercept=0.5, linetype='dashed', size=1)+
+  geom_hline(yintercept=0.5, size=1)+
   theme_classic()
 female.prob <- female.base + #equation:p = 1/1+e-(b0 +b1x+b2x+b3x)
           
-  stat_function(aes(),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(1)-slopep2*(0)))})+
+  stat_function(aes(color = "PAL I"),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(1)-slopep2*(0)))})+
   #male p2
-  stat_function(aes(),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(0)-slopep2*(1)))})
+  stat_function(aes(color = "PAL 2"),size=1.3,fun = function(x){1/(1+exp(-intercept-slopeconc*(x)-slopemale*(0)-slopep1*(0)-slopep2*(1)))})
 
 
 female.prob
+ggsave("DoseResponseCurveFemaleLice",path = path.plots, plot = female.prob, device = "png")
 
-
-#I am still in the process of figuring out how this equation actually works 
-
-#need to add females
-
-#SECTION NEEDS WORK#####
-#https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
-#trying an alternate method here as recomended by Thor, instead of writing out each slope in the function, I'm going to try and get all the predicted probabilites as a new dataframe
-# temporary data
-
-names(SLICE.2019)
-tmpdat <- SLICE.2019[, c("")]
-
-jvalues <- with(SLICE.2019, seq(from = min(slice_conc_PPB), to = max(slice_conc_PPB), length.out = 100))
-
-# calculate predicted probabilities and store in a list
-pp <- lapply(jvalues, function(j) {
-  SLICE.2019$slice_conc_PPB <- j
-  predict(m.3, newdata = tmpdat, type = "response")
-})
-
+?ggsave
 #EC50 estimates
 #EC50 values
 #assign 50% probaility 
@@ -319,11 +301,34 @@ EC50.MP2 <- (log(p/(1-p)) - intercept-slopemale*(1)-slopep1*(0)-slopep2*(1)) / (
 EC50.MADULT <- (log(p/(1-p)) - intercept-slopemale*(1)-slopep1*(0)-slopep2*(0)) / (slopeconc)
 
 # EC50 VALUES
+#Female Pal 1
 EC50.FP1
+#Female Pal 2
 EC50.FP2
+#Male Pal 1
 EC50.MP1
+#Male Pal 2
 EC50.MP2
+#Male Adult
 EC50.MADULT
+
+
+  #SECTION NEEDS WORK#####
+#https://stats.idre.ucla.edu/r/dae/mixed-effects-logistic-regression/
+#trying an alternate method here as recomended by Thor, instead of writing out each slope in the function, I'm going to try and get all the predicted probabilites as a new dataframe
+# temporary data
+
+names(SLICE.2019)
+tmpdat <- SLICE.2019[, c("")]
+
+jvalues <- with(SLICE.2019, seq(from = min(slice_conc_PPB), to = max(slice_conc_PPB), length.out = 100))
+
+# calculate predicted probabilities and store in a list
+pp <- lapply(jvalues, function(j) {
+  SLICE.2019$slice_conc_PPB <- j
+  predict(m.3, newdata = tmpdat, type = "response")
+})
+
 
 #this next section is to be added once the first is complete, essentially all that would be added in terms of models would be the fixed effect of year, possibly collection location as a random effect. This would also include two new datasets (2012 and 2015), a bunch of subsetting, and a lot of ggplot pain. This next section is only if I have time. I would really like to figure out how to actually get the predicted probabilites as a list and plot them rather than manually write the equations for each slope.
 
