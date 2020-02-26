@@ -6,10 +6,10 @@
 # Name: Christian Carson
 # Description:
   # Index:
-#18-105: Setup and Workflow
-#105-143: Analysis Setup
-#143-218: Mixed Models for 2019 Resistance Report
-#218-262: Graphs for 2019 Resistance Model
+#18-100: Setup and Workflow
+#100-138: Analysis Setup
+#138-219: Mixed Models for 2019 Resistance Report
+#219-316: Dose response curves for 2019 Resistance Model and EC50 estimates
 #Later sections to be added.
 #
 #
@@ -216,7 +216,7 @@ slopemale
 slopep1
 slopep2
 
-#######Graphing for 2019 Resitance#####
+#######Graphing for 2019 Sensitivity Estimates - Dose Response Curves and EC50's#####
 #setting up base plots
 library(ggplot2)
 male.base <- ggplot(data = SLICE.2019, aes(x=SLICE.2019$slice_conc_PPB, y=SLICE.2019$dead_and_moribund))  +
