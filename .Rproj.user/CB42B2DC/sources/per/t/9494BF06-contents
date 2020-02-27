@@ -1,0 +1,132 @@
+###Logistic regression for SLICE resistance (Clayoquot) Summer of 2019, Robert Humenny, Critty Carson
+rm(list=ls())
+graphics.off()
+
+require(gridExtra)
+require(lme4)
+library(ggplot2)
+
+#Import data set (may need to work on making this more efficent)
+
+SLICE_ccfs<-SLICE.resistance.trails.Cedar.Coast.Field.Station...Sheet1
+
+SLICE_ccfs <- read.csv("C:/Users/user/OneDrive - Quest University Canada/Desktop/Cedar Coast/CedarCoastSeaLiceResist2019/Analysis/Data-Raw/SLICE resistance trails Cedar Coast Field Station - Sheet1.csv")
+
+View(SLICE_ccfs)
+names(SLICE_ccfs)
+SLICE_ccfs$dish <- as.character(SLICE_ccfs$dish)
+str(SLICE_ccfs)
+
+
+#mixed logistic regression model. Fixed effects:EMB concentration, lifestage, sex. Random effects (random intercepts): petri-dish nested in date of collection.
+m1 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|date_of_collection/dish), data = SLICE.2019, family = binomial)
+summary(m1)  
+
+# assigining coefficients and random variance
+interceptm1 <- summary(m1)$coefficients['(Intercept)', 1]
+slopem1conc <- summary(m1)$coefficients['slice_conc_PPB', 1]
+slopem1sexm<- summary(m1)$coefficients['louse_sexM', 1]
+slopem1p1<- summary(m1)$coefficients['louse_stageP1', 1]
+slopem1p2<- summary(m1)$coefficients['louse_stageP2', 1]
+
+
+
+#setting up base plots
+plot1a <- ggplot(data = SLICE_ccfs, aes(x=SLICE_ccfs$slice_conc_PPB, y=SLICE_ccfs$dead_and_moribund))  +
+  geom_point()+ 
+  theme_bw()+
+  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal dose curve for female lice')+
+  ylim(0,1)+
+  geom_hline(yintercept=0.5, linetype='dashed', size=1)
+plot2a <- ggplot(data = SLICE_ccfs, aes(x=SLICE_ccfs$slice_conc_PPB, y=SLICE_ccfs$dead_and_moribund))  +
+  geom_point()+ 
+  theme_bw()+
+  labs(x= "EMB concentration (ppb)",y= expression("Probability of death"),title='Lethal dose curve for male lice')+
+  ylim(0,1)+
+  geom_hline(yintercept=0.5, linetype='dashed', size=1)
+
+
+##plotting females
+plot1f <- plot1a + stat_function(aes(color='pal 1'),size=1.1,fun = function(x) {1/(1+exp(-interceptm1-slopem1conc *(x)-slopem1sexm*(0)-slopem1p1*(1)-slopem1p2*(0)))})+ #female pal 1
+  stat_function(aes(color='pal 2'),size=1.1,fun = function(x) {1/(1+exp(-interceptm1 -slopem1conc *(x)-slopem1sexm*(0)-slopem1p1*(0)-slopem1p2*(1)))})+ #female pal 2
+  scale_colour_manual("Life stage",values=c('grey50',"black"))
+plot1f
+##plotting males
+plot1m <- plot2a +stat_function(aes(color='pal 1'),size=1.1,fun = function(x) {1/(1+exp(-interceptm1-slopem1conc *(x)-slopem1sexm*(1)-slopem1p1*(1)-slopem1p2*(0)))})+ #male pal 1
+  stat_function(aes(color='pal 2'),size=1.1,fun = function(x) {1/(1+exp(-interceptm1-slopem1conc *(x)-slopem1sexm*(1)-slopem1p1*(0)-slopem1p2*(1)))})+ #male pal 2
+  stat_function(aes(color='adult'),size=1.1,fun = function(x) {1/(1+exp(-interceptm1-slopem1conc *(x)-slopem1sexm*(1)-slopem1p1*(0)-slopem1p2*(0)))})+  #male adult
+  scale_colour_manual("Life stage",values=c('grey90',"grey50","black"))
+plot1m
+
+#EC50 values
+p <- 0.5
+xfp1 <- (log(p/(1-p)) - interceptm1-slopem1sexm*(0)-slopem1p1*(1)-slopem1p2*(0)) / (slopem1conc)#EC50 female pal 1
+xfp2 <- (log(p/(1-p)) - interceptm1-slopem1sexm*(0)-slopem1p1*(0)-slopem1p2*(1)) / (slopem1conc)#EC50 female pal 2
+xmp1 <- (log(p/(1-p)) - interceptm1-slopem1sexm*(1)-slopem1p1*(1)-slopem1p2*(0)) / (slopem1conc)#EC50 male pal 1
+xmp2 <- (log(p/(1-p)) - interceptm1-slopem1sexm*(1)-slopem1p1*(0)-slopem1p2*(1)) / (slopem1conc)#EC50 male pal 2
+xma  <- (log(p/(1-p)) - interceptm1-slopem1sexm*(1)-slopem1p1*(0)-slopem1p2*(0)) / (slopem1conc)#EC50 male adult
+
+# comparing fit of model to null model with liklehood ratio test
+model.null = glm(dead_and_moribund  ~ 1, data=SLICE_ccfs,family = binomial(link="logit"))
+anova(m1,model.null,test="Chisq")
+
+#pairing male and female plots beside each other
+grid.arrange(plot1f, plot1m, ncol=2)
+
+model2 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex+ (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial)
+model3 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_stage + (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial)
+model4 <- glm(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage, data = SLICE_ccfs, family = binomial)
+model5 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|date_of_collection), data = SLICE_ccfs, family = binomial)
+model6 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|dish), data = SLICE_ccfs, family = binomial)
+AIC(m1,model2,model3,model4,model5,model6)
+
+#other models and the AIC calculation
+#our model
+
+m1      <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial) 
+#no random effects
+model2  <- glm(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage, data = SLICE_ccfs, family = binomial)
+model3  <- glm(dead_and_moribund ~  slice_conc_PPB  + louse_stage, data = SLICE_ccfs, family = binomial)
+model4  <- glm(dead_and_moribund ~  slice_conc_PPB + louse_sex , data = SLICE_ccfs, family = binomial)
+model5  <- glm(dead_and_moribund ~  slice_conc_PPB, data = SLICE_ccfs, family = binomial)
+#just 1 random effect
+model6  <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|date_of_collection), data = SLICE_ccfs, family = binomial)
+model7  <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex  + (1|date_of_collection), data = SLICE_ccfs, family = binomial)
+model8  <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_stage + (1|date_of_collection), data = SLICE_ccfs, family = binomial)
+model9  <- glmer(dead_and_moribund ~  slice_conc_PPB + (1|date_of_collection), data = SLICE_ccfs, family = binomial)
+model10 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + louse_stage + (1|dish), data = SLICE_ccfs, family = binomial)
+model11 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex  + (1|dish), data = SLICE_ccfs, family = binomial)
+model12 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_stage + (1|dish), data = SLICE_ccfs, family = binomial)
+model13 <- glmer(dead_and_moribund ~  slice_conc_PPB + (1|dish), data = SLICE_ccfs, family = binomial)
+#2 random effects
+model14 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_sex + (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial) 
+model15 <- glmer(dead_and_moribund ~  slice_conc_PPB + louse_stage + (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial) 
+model16 <- glmer(dead_and_moribund ~  slice_conc_PPB + (1|date_of_collection/dish), data = SLICE_ccfs, family = binomial) 
+
+AIC(m1,model2,model3,model4,model5,model6,model7,model8,model9,model10,model11,model12,model13,model14,model15,model16)
+
+##AIC Table 
+
+########################CREATE AIC SELECTION TABLE
+##Using MuMIn Package
+library(MuMIn)
+
+modelTABLE <- model.sel(m1,model2,model3,model4,model5,model6,model7,model8,model9,model10,model11,model12,model13,model14,model15,model16)
+View(modelTABLE)  ##No AIC values, just AICc, no R-squared, and model name (i.e, a~b) not present
+
+##Using stargazer Package
+library(stargazer)
+test<-stargazer(m1,model2,model3,model4,model5,model6,model7,model8,model9,model10,model11,model12,model13,model14,model15,model16,
+                type = "text", 
+                title="Regression Results", 
+                align=TRUE,
+                style="default",
+                dep.var.labels.include=TRUE,
+                flip=FALSE
+                ## ,out="models.htm"
+)
+
+#Weights 
+#ordered 1-16
+round(Weights(AICc(m1,model2,model3,model4,model5,model6,model7,model8,model9,model10,model11,model12,model13,model14,model15,model16)), 3)
+

@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582737519976.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AF073AD4",
+    "lastKnownWriteTime" : 2543885735920,
+    "last_content_update" : 1582737519976,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "FB6D6024",
+        "caption" : "SLICE.2019",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=SLICE.2019&cache_key=FB6D6024",
+        "displayedObservations" : 290,
+        "environment" : "",
+        "expression" : "SLICE.2019",
+        "object" : "SLICE.2019",
+        "preview" : 0,
+        "totalObservations" : 290,
+        "variables" : 9
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

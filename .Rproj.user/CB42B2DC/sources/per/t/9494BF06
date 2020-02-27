@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582656586162.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "516548675",
+    "id" : "9494BF06",
+    "lastKnownWriteTime" : 1582308329,
+    "last_content_update" : 1582308329,
+    "path" : "C:/Users/user/OneDrive - Quest University Canada/Desktop/Cedar Coast/CedarCoastSeaLiceResist2019/Analysis/Data-generated/SeaLiceResist2019_MixedEffects_Nov2019.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "99,0",
+        "scrollLine" : "80"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

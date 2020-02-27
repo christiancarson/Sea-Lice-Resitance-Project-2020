@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582676285417.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1454669402",
+    "id" : "B424910F",
+    "lastKnownWriteTime" : 1582049612,
+    "last_content_update" : 1582049612,
+    "path" : "C:/Users/user/OneDrive - Quest University Canada/Desktop/Quest 2019-2020/Data Analysis in R/Git/BigGrega/Big_Crime_Code.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "334,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

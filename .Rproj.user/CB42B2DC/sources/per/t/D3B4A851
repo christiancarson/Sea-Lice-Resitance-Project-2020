@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582575513893.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3609614304",
+    "id" : "D3B4A851",
+    "lastKnownWriteTime" : 1582693259,
+    "last_content_update" : 1582735215478,
+    "path" : "C:/Users/user/OneDrive - Quest University Canada/Desktop/Quest 2019-2020/Data Analysis in R/Git/SeaLiceResistance2020/Sea-Lice-Resitance-Project-2020/MixedEffectsModelsSLICE2019.R",
+    "project_path" : "MixedEffectsModelsSLICE2019.R",
+    "properties" : {
+        "cursorPosition" : "193,0",
+        "scrollLine" : "170"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
